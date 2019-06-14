@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html  lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title th:text="#{index.title}">信息录入系统</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="robots" content="all,follow">
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" href="/static/vendor/bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome CSS-->
+    <link rel="stylesheet" href="/static/vendor/font-awesome/css/font-awesome.min.css">
+    <!-- Fontastic Custom icon font-->
+    <link rel="stylesheet" href="/static/css/fontastic.css">
+    <!-- Google fonts - Poppins -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,700">
+    <!-- theme stylesheet-->
+    <link rel="stylesheet" href="/static/css/style.default.css" id="theme-stylesheet">
+    <!-- Custom stylesheet - for your changes-->
+    <link rel="stylesheet" href="/static/css/custom.css">
+    <!-- Favicon-->
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/assets/img/favicon.png">
+    <!-- Tweaks for older IEs--><!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+    <script src="/static/scripts/jquery/jquery.js"></script>
+    <script src="/static/scripts/jquery/jquery.min.js"></script>
+</head>
+<body>
+<div class="page login-page">
+    <div class="container d-flex align-items-center">
+        <div class="form-holder has-shadow">
+            <div class="row">
+                <!-- Logo & Information Panel-->
+                <div class="col-lg-6">
+                    <div class="info d-flex align-items-center">
+                        <div class="content">
+                            <div class="logo">
+                                <h1>WELCOME</h1>
+                            </div>
+                            <p>
+                            <h1 th:text="#{index.title}">信息录入系统</h1></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Form Panel    -->
+                <div class="col-lg-6 bg-white">
+                    <div class="form d-flex align-items-center">
+                        <div class="content">
+                            <form method="post" class="form-validate" action="/login"
+                                  id="loginForm" onsubmit="return isRight()">
+                                <div class="form-group">
+                                    <p class="text-red" th:text="${msg}"></p>
+                                </div>
+
+                                <div class="form-group">
+                                    <input id="login-username" type="text" name="username" required
+                                           data-msg="Please enter your username" class="input-material">
+                                    <label for="login-username" class="label-material" th:text="#{index.username}">User
+                                        Name</label>
+                                </div>
+                                <div class="form-group">
+                                    <input id="login-password" type="password" name="password" required
+                                           data-msg="Please enter your password" class="input-material">
+                                    <label for="login-password" class="label-material" th:text="#{index.password}">Password</label>
+                                </div>
+                                <button type="submit" id="login" class="btn btn-primary" th:text="#{index.loginBtn}">sign in
+                                </button>
+                                <!-- This should be submit button but I replaced it with <a> for demo purposes-->
+                            </form>
+                            <!--<a href="#" class="forgot-pass">Forgot Password?</a><br>-->
+                            <!--<small>Do not have an account?</small>-->
+                            <!--<a href="register.jsp" class="signup">Signup</a>-->
+                            <a class="btn-sm" th:href="@{/index.html(language='zh_CN')}">中文</a>
+
+                            <a class="btn-sm" th:href="@{/index.html(language='en_US')}">English</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="copyrights text-center">
+
+    </div>
+</div>
+<!-- JavaScript files-->
+<script src="/static/vendor/jquery/jquery.min.js"></script>
+<script src="/static/vendor/popper.js/umd/popper.min.js"></script>
+<script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/vendor/jquery.cookie/jquery.cookie.js"></script>
+<script src="/static/vendor/chart.js/Chart.min.js"></script>
+<script src="/static/vendor/jquery-validation/jquery.validate.min.js"></script>
+<!-- Main File-->
+<script src="/static/scripts/js/front.js"></script>
+<script src="/static/md5/jQuery.md5.js"></script>
+<script type="text/javascript">
+
+    //登录校验
+    var temp;
+
+    function check() {
+
+        var username = $("#login-username").val();
+        var pwd = $("#login-password").val();
+        //md5加密
+        // pwd = $.md5(pwd);
+
+        var data = {
+            "username": username,
+            "password": pwd
+        }
+        $.ajax({
+            url: "/login/check",
+            type: "post",
+            // async: false,
+            timeout: 3000,
+            contentType: "application/json;charset=UTF-8",
+            dataType: 'json',
+            data: JSON.stringify(data),
+            success: function (data) {
+                console.log(data + "*************");
+                temp = data;
+            }
+        });
+    }
+
+    function isRight() {
+        var username = $("#login-username").val();
+        var password = $("#login-password").val();
+        if (username == null || username == ""
+            || password == null || password == "") {
+
+            alert("账号或密码不能为空！");
+            return false;
+        }
+        return true;
+    }
+
+</script>
+</body>
+</html>

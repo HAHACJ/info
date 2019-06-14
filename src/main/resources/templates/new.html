@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>信息录入系统</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <!-- VENDOR CSS -->
+    <link rel="stylesheet" href="/static/assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/assets/vendor/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/assets/vendor/linearicons/style.css">
+    <!-- MAIN CSS -->
+    <link rel="stylesheet" href="/static/assets/css/main.css">
+    <!-- FOR DEMO PURPOSES ONLY. You should remove this in your project -->
+    <link rel="stylesheet" href="/static/assets/css/demo.css">
+    <!-- GOOGLE FONTS -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+    <!-- ICONS -->
+    <link rel="apple-touch-icon" sizes="76x76" href="/static/assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/assets/img/favicon.png">
+    <link rel="stylesheet" href="/static/assets/vendor/toastr/toastr.min.css">
+
+</head>
+
+<body>
+<!-- WRAPPER -->
+<div id="wrapper">
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="brand">
+            <a href="/user"><img src="/static/assets/img/logo-dark.png" alt="Klorofil Logo"
+                                      class="img-responsive logo"></a>
+        </div>
+        <div class="container-fluid">
+            <div class="navbar-btn">
+                <button type="button" class="btn-toggle-fullwidth"><i class="lnr lnr-arrow-left-circle"></i></button>
+            </div>
+            <!--<form class="navbar-form navbar-left">-->
+            <!--<div class="input-group">-->
+            <!--<input type="text" value="" class="form-control" placeholder="Search dashboard...">-->
+            <!--<span class="input-group-btn"><button type="button" class="btn btn-primary">Go</button></span>-->
+            <!--</div>-->
+            <!--</form>-->
+
+            <div id="navbar-menu">
+                <ul class="nav navbar-nav navbar-right">
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <!--<img src="/static/assets/img/profile-bg.png" class="img-circle" alt="Avatar">-->
+                            <span th:text="${session.user.username}"></span>
+                            <i class="icon-submenu lnr lnr-chevron-down"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!--<li><a href="#"><i class="lnr lnr-user"></i> <span>My Profile</span></a></li>-->
+                            <!--<li><a href="#"><i class="lnr lnr-envelope"></i> <span>Message</span></a></li>-->
+                            <!--<li><a href="#"><i class="lnr lnr-cog"></i> <span>Settings</span></a></li>-->
+                            <li><a href="/login/logout"><i class="lnr lnr-exit"></i> <span>登出</span></a></li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- END NAVBAR -->
+    <!-- LEFT SIDEBAR -->
+    <div id="sidebar-nav" class="sidebar">
+        <div class="sidebar-scroll">
+            <nav>
+                <ul class="nav">
+                    <li><a href="/user" class=""><i class="lnr lnr-home"></i> <span>主页</span></a></li>
+
+                    <li><a href="/new" class="active"><i class="lnr lnr-pencil"></i> <span>新建</span></a></li>
+
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <!-- END LEFT SIDEBAR -->
+    <!-- MAIN -->
+    <div class="main">
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="container-fluid">
+
+                <!-- BASIC TABLE -->
+                <div class="panel panel-headline">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">新建用户信息</h3>
+                    </div>
+                    <div class="panel-body">
+
+                        <form class="form-horizontal col-md-offset-1" action="/new/info" method="post"
+                              onsubmit="return isOk()">
+
+                            <div class="form-group">
+                                <label for="username" class="col-sm-2 control-label">用户名:</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" id="username" name="username"
+                                           placeholder="用户名" onblur="checkUsername()">
+                                </div>
+                                <span id="usernameError" class="text-danger"></span>
+                            </div>
+
+                            <!--<div class="form-group">-->
+                            <!--<label for="cardType" class="col-sm-2 control-label">证件类型:</label>-->
+                            <!--<div class="col-sm-5">-->
+                            <!--<input type="text" class="form-control" id="cardType" name="cardType"-->
+                            <!--placeholder="证件类型" onblur="checkCardType()">-->
+                            <!--</div>-->
+                            <!--<span id="cardTypeError" class="text-danger"></span>-->
+                            <!--</div>-->
+
+
+                            <div class="form-group">
+                                <label for="cardType" class="col-sm-2 control-label">证件类型:</label>
+                                <div class="col-sm-5">
+                                    <select class="form-control" id="cardType" name="cardType">
+                                        <option value="" style="display: none;" disabled selected>证件类型</option>
+                                        <option value="身份证">身份证</option>
+                                        <option value="居住证">居住证</option>
+                                        <option value="签证">签证</option>
+                                        <option value="港澳通行证">港澳通行证</option>
+                                        <option value="其他">其他备注</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="IDCard" class="col-sm-2 control-label">证件号码:</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" id="IDCard" name="IDCard"
+                                           placeholder="证件号码" onblur="checkIDCard()">
+                                </div>
+                                <span id="IDCardError" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="recordReason" class="col-sm-2 control-label">记录原因:</label>
+                                <div class="col-sm-5">
+                                    <textarea class="form-control" id="recordReason" rows="5" name="recordReason"
+                                              placeholder="记录原因"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="remark1" class="col-sm-2 control-label">备注:</label>
+                                <div class="col-sm-5">
+                                    <textarea class="form-control" id="remark1" rows="5" name="remark1"
+                                              placeholder="备注1"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="remark2" class="col-sm-2 control-label">备注2:</label>
+                                <div class="col-sm-5">
+                                    <textarea class="form-control" id="remark2" rows="5" name="remark2"
+                                              placeholder="备注2"></textarea>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="col-sm-offset-4 col-sm-10">
+                                    <button id="submit_btn" data-position="top-center"
+
+                                            type="submit" class="btn btn-success">提交
+                                    </button>
+                                </div>
+
+                            </div>
+                        </form>
+                        <button id="toastr-demo" type="button" class="btn btn-danger btn-toastr"
+                                data-context="error"
+                                data-message="信息录入有误！" data-position="top-center"
+                                style="display:none"></button>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <!-- END MAIN CONTENT -->
+    </div>
+    <!-- END MAIN -->
+    <div class="clearfix"></div>
+    <footer>
+        <div class="container-fluid">
+        </div>
+    </footer>
+</div>
+<!-- END WRAPPER -->
+<!-- Javascript -->
+<script src="/static/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/static/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/assets/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<script src="/static/assets/scripts/klorofil-common.js"></script>
+<script src="/static/assets/vendor/toastr/toastr.min.js"></script>
+</body>
+
+<script type="text/javascript">
+    $("#submit_btn").click(function () {
+        isOk();
+    })
+
+
+    //校验表单是否合格
+
+    function isOk() {
+
+        if (checkUsername() && checkCardType() && checkIDCard()) {
+            return true;
+        }
+        $("#toastr-demo").click();
+        return false;
+    }
+
+    function checkUsername() {
+        return check("username");
+    }
+
+    function checkCardType() {
+        var cardType = $('#cardType option:selected').val();//选中的值
+        if (cardType == null || cardType == "") {
+            return false;
+        }
+        return true;
+    }
+
+    function checkIDCard() {
+        return check("IDCard");
+    }
+
+    function check(selectorId) {
+        var sId = $("#" + selectorId + "Error");
+        sId.text("");
+        var sIdInput = $("#" + selectorId).val();
+        if (sIdInput == null || sIdInput == "") {
+            sId.text("Input box cannot be empty！");
+            return false;
+        }
+        return true;
+    }
+</script>
+</html>

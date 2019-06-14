@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>信息录入系统</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <!-- VENDOR CSS -->
+    <link rel="stylesheet" href="/static/assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/assets/vendor/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/assets/vendor/linearicons/style.css">
+    <link rel="stylesheet" href="/static/assets/vendor/chartist/css/chartist-custom.css">
+    <link rel="stylesheet" href="/static/assets/vendor/toastr/toastr.min.css">
+
+    <!-- MAIN CSS -->
+    <link rel="stylesheet" href="/static/assets/css/main.css">
+    <!-- FOR DEMO PURPOSES ONLY. You should remove this in your project -->
+    <link rel="stylesheet" href="/static/assets/css/demo.css">
+    <!-- GOOGLE FONTS -->
+    <!--<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">-->
+    <!-- ICONS -->
+    <link rel="apple-touch-icon" sizes="76x76" href="/static/assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/assets/img/favicon.png">
+</head>
+
+<body>
+<!-- WRAPPER -->
+<div id="wrapper">
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="brand">
+            <a href="/user">
+                <img src="/static/assets/img/logo-dark.png" alt="Klorofil Logo" class="img-responsive logo">
+            </a>
+        </div>
+        <div class="container-fluid">
+            <div class="navbar-btn">
+                <button type="button" class="btn-toggle-fullwidth"><i class="lnr lnr-arrow-left-circle"></i></button>
+            </div>
+
+            <!--<button id="toastr-demo" type="button" class="btn btn-danger btn-toastr"-->
+            <!--data-context="error"-->
+            <!--data-message="" data-position="top-center"-->
+            <!--style="display:none"></button>-->
+
+            <form class="navbar-form navbar-left">
+                <div class="input-group">
+                    <div>
+                        <select class="form-control" id="cardType">
+                            <option value="" style="display: none;" disabled selected>证件类型</option>
+                        </select>
+                        <input type="text" id="searchKey" value="" class="form-control"
+                               placeholder="输入证件号码...">
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-primary" id="searchBtn">查询</button>
+                        </span>
+                    </div>
+                </div>
+                <span class="input-group">
+                        <input type="file" name="file" id="file" accept=".xls, .xlsx" style="display:none"/>
+                        <div class="input-append">
+                            <input id="photoCover" readonly="readonly" class="form-control" type="text"
+                                   placeholder="选择Excel">
+                            <a class="btn btn-info" onclick="$('input[id=file]').click();">浏览文件</a>
+                            <button type="button" class="btn btn-info" id="upload_btn">
+                                <i id="upload_wait"></i>上传</button>
+                        </div>
+                </span>
+
+
+                <span class="demo-button">
+                    <a href="javascript:void(0)" class="btn btn-info" id="down_href">下载</a>
+                </span>
+
+
+            </form>
+
+            <div id="navbar-menu">
+                <ul class="nav navbar-nav navbar-right">
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <!--<img src="/static/assets/img/profile-bg.png" class="img-circle" alt="Avatar">-->
+                            <span th:text="${session.user.username}"></span>
+                            <i class="icon-submenu lnr lnr-chevron-down"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!--<li><a href="#"><i class="lnr lnr-user"></i> <span>My Profile</span></a></li>-->
+                            <!--<li><a href="#"><i class="lnr lnr-envelope"></i> <span>Message</span></a></li>-->
+                            <!--<li><a href="#"><i class="lnr lnr-cog"></i> <span>Settings</span></a></li>-->
+                            <li><a href="/login/logout"><i class="lnr lnr-exit"></i> <span>登出</span></a></li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- END NAVBAR -->
+    <!-- LEFT SIDEBAR -->
+    <div id="sidebar-nav" class="sidebar">
+        <div class="sidebar-scroll">
+            <nav>
+                <ul class="nav">
+                    <li><a href="/user" class="active"><i class="lnr lnr-home"></i> <span>主页</span></a></li>
+                    <li><a href="/new"><i class="lnr lnr-pencil"></i> <span>新建</span></a></li>
+
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <!-- END LEFT SIDEBAR -->
+    <!-- MAIN -->
+    <div class="main">
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="container-fluid">
+                <!-- OVERVIEW -->
+                <div class="panel panel-headline">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">查询用户信息</h3>
+                        <!--<p class="panel-subtitle">Period: Oct 14, 2016 - Oct 21, 2016</p>-->
+                    </div>
+
+                    <div class="panel-body">
+
+                        <table class="table table-hover" id="infoTable">
+                            <thead>
+                            <!--<tr>-->
+                            <!--<th>-->
+                            <!--<input type="checkbox" id="checkboxAll" name='check'>-->
+                            <!--<span>All</span>-->
+                            <!--</th>-->
+                            <!--<th>#</th>-->
+                            <!--<th>Username</th>-->
+                            <!--<th>Card Type</th>-->
+                            <!--<th>ID Card</th>-->
+                            <!--<th>Record User</th>-->
+                            <!--<th>Record Organization</th>-->
+                            <!--<th>Record Time</th>-->
+                            <!--<th>Record Reason</th>-->
+                            <!--<th>remark1</th>-->
+                            <!--<th>remark2</th>-->
+                            <!--</tr>-->
+
+
+                            <tr>
+
+                                <th>
+                                    <input type="checkbox" id="checkboxAll" name='check'>
+                                    <span>全选</span>
+                                </th>
+
+                                <th>#</th>
+                                <th>用户名</th>
+                                <th>证件类型</th>
+                                <th>证件号码</th>
+                                <th>记录人</th>
+                                <th>记录人组织</th>
+                                <th>记录时间</th>
+                                <th>记录原因</th>
+                                <th>备注1</th>
+                                <th>备注2</th>
+                            </tr>
+
+
+                            </thead>
+                            <tbody id="infoTbody">
+                            </tbody>
+                        </table>
+
+
+                    </div>
+
+                </div>
+                <!-- END OVERVIEW -->
+            </div>
+            <div class="copyright">
+                <ul id="page"></ul>
+            </div>
+        </div>
+        <!-- END MAIN CONTENT -->
+    </div>
+    <!-- END MAIN -->
+
+    <footer>
+
+    </footer>
+</div>
+<!-- END WRAPPER -->
+<!-- Javascript -->
+<script src="/static/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/static/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/assets/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<script src="/static/assets/vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js"></script>
+<script src="/static/assets/vendor/chartist/js/chartist.min.js"></script>
+<script src="/static/assets/scripts/klorofil-common.js"></script>
+<script src="/static/assets/vendor/toastr/toastr.min.js"></script>
+<script src="/static/bootstrap-paginator/bootstrap-paginator.js"></script>
+
+
+<script type="text/javascript">
+
+    //清除表格原来的数据
+    function reset_tbody() {
+        $("#infoTable tbody").html("");
+    }
+
+    //页面加载
+    $(function () {
+        getCardType();
+    })
+
+    //获取所有身份证类型
+    function getCardType() {
+        $.ajax({
+            url: "/user/cardType",
+            type: "get",
+            success: function (data) {
+                console.log("所有身份证类型：" + data);
+                fillINCardType(data);
+            }
+        })
+    }
+
+    //动态添加身份证类型
+    function fillINCardType(data) {
+        $.each(data, function (index, temp) {
+            $("#cardType").append("<option value='" + temp + "'>" + temp + "</option>");
+        });
+    }
+
+    //通过身份证查询
+    $("#searchBtn").click(function () {
+        var cardType = $("#cardType").val();
+        var IDCard = $("#searchKey").val();
+
+        var data = {
+            "cardType": cardType,
+            "IDCard": IDCard
+        }
+
+        $.ajax({
+            url: "/user/find/IDCard",
+            type: "get",
+            contentType: "application/json;charset=UTF-8",
+            dataType: 'json',
+            data: data,
+            success: function (result) {
+                reset_tbody();
+                console.log("*********");
+                console.log(result);
+                console.log("********");
+                var pageNum = result.data.pageNum;
+                var pageSize = result.data.pageSize;
+                var pages = result.data.pages;
+
+                var reqUrl = "/user/find/IDCard";
+                var reqType = "get";
+
+                var list = result.data.list;
+
+                if (list != null && list.length != 0) {
+                    page(pageNum, 5, pages, reqUrl, reqType, data);
+                    showManyUserInfo(result.data.list);
+                } else {
+                    console.log("list为空!")
+                    $("#page").remove();
+                }
+
+            },
+            error: function (result) {
+                reset_tbody();
+            }
+        });
+    });
+
+    //显示查询的取用户信息
+    function showUserInfo(data, index) {
+        if (index == null || index == NaN || index == "") {
+            index = 1;
+        }
+        if (data == null) {
+            reset_tbody();
+            return;
+        }
+
+        // console.log(data);
+        var tdcheckbox = $("<td></td>");
+        var checktbox = $("<input name='check' type='checkbox'>").addClass("fancy-checkbox").attr("checkId", data.recordId);
+        checktbox.appendTo(tdcheckbox);
+        var num = $("<td></td>").append(index);
+        var username = $("<td></td>").append(data.username);
+        var cardType = $("<td></td>").append(data.cardType);
+        var IDCard = $("<td></td>").append(data.idcard);
+        var recordUser = $("<td></td>").append(data.recordUser);
+        var recordOrg = $("<td></td>").append(data.recordOrg);
+        var recordTime = $("<td></td>").append(data.recordTime);
+        var recordReason = $("<td></td>").append(data.recordReason);
+        var remark1 = $("<td></td>").append(data.remark1);
+        var remark2 = $("<td></td>").append(data.remark2);
+
+        var tr = $("<tr></tr>>")
+            .append(tdcheckbox)
+            .append(num)
+            .append(username)
+            .append(cardType)
+            .append(IDCard)
+            .append(recordUser)
+            .append(recordOrg)
+            .append(recordTime)
+            .append(recordReason)
+            .append(remark1)
+            .append(remark2);
+        tr.appendTo("#infoTbody");
+    }
+
+    //选取选中的信息
+    function getCheckBox() {
+        var checkIds = "";
+        $(".fancy-checkbox").each(function (index, element) {
+            if ($(this).is(":checked")) {
+                if (checkIds.length > 0) {
+                    checkIds += ','
+                }
+                checkIds += $(this).attr('checkId')
+            }
+        });
+
+        console.log(checkIds);
+        return checkIds;
+    }
+
+
+    //全选、取消全选的事件 使用prop可以避免版本迭代的bug，避免出现只能全选一次 
+    $("#checkboxAll").click(function () {
+
+        if (this.checked) {
+
+            $("[name=check]:checkbox").prop("checked", true);
+        } else {
+
+            $("[name=check]:checkbox").prop("checked", false);
+        }
+    });
+
+
+    //获取文件路径
+    $('input[id=file]').change(function () {
+        var path = $(this).val().split("\\");
+        var fileName = path[path.length - 1];
+        $('#photoCover').val(fileName);
+    });
+
+    //文件上传查询数据
+    $("#upload_btn").click(function () {
+
+        var file = $("#file")[0].files[0];
+        if (file == null) {
+            $("#toastr-demo").click();
+            alert("未选中要上传的文件！");
+            return;
+        }
+
+        $("#upload_btn").attr("disabled", "disabled");
+        $("#upload_wait").addClass("fa fa-spinner fa-spin");
+        var formData = new FormData();
+        formData.append("file", $("#file")[0].files[0]);
+        $.ajax({
+            type: "post",
+            url: " user/upload",
+            data: formData,
+            contentType: false,
+            processData: false,
+            dataType: "json",
+            success: function (result) {
+                $("#upload_btn").removeAttr("disabled");
+                $("#upload_wait").removeAttr("class");
+                uploadFind();
+            },
+            error: function (msg) {
+                console.log("文件上传失败!");
+            }
+        })
+        ;
+    });
+
+    function uploadFind() {
+        $.ajax({
+            url: "user/upload/find",
+            type: "get",
+            success: function (result) {
+                reset_tbody();
+                console.log("******")
+                console.log(result)
+                console.log("******")
+                var pages = result.msg;
+                var data = {}
+                page2(1, 50, pages, "user/upload/find", "get", data);
+
+                console.log("****")
+                showManyUserInfo(result.data);
+                console.log("****")
+            }
+        });
+    }
+
+
+    //显示批量信息
+    function showManyUserInfo(result) {
+        $.each(result, function (index, temp) {
+            showUserInfo(temp, index + 1);
+        });
+    }
+
+
+    //选中信息并生成文件下载下来
+    $(document).ready(function () {
+        // $("#toastr-demo").attr("data-message", "未选中要下载的信息！");
+        //点击链接的时候调用
+        $("#down_href").click(function () {
+            var ids = getCheckBox();
+            if (ids == null || ids == "" || ids.length == 0) {
+                // $("#toastr-demo").click();
+                alert("未选中要下载的信息！");
+            } else {
+                console.log(ids);
+                $.download("/user/down", "post", ids);
+            }
+        });
+    });
+
+    // 文件下载
+    jQuery.download = function (url, method, ids) {
+        jQuery('<form action="' + url + '" method="' + (method || 'post') + '">' +  // action请求路径及推送方法
+            '<input type="text" name="ids" value="' + ids + '"/>' + // 参数
+            '</form>')
+            .appendTo('body').submit().remove();
+    };
+
+
+    //封装的分页
+    function page(pageNum, pageSize, pages, reqUrl, reqType, reqJsonData) {
+        $("#page").bootstrapPaginator({
+            bootstrapMajorVersion: 3, //对应的bootstrap版本
+            currentPage: pageNum, //当前页数
+            numberOfPages: pageSize, //每次显示页数
+            totalPages: pages, //总页数
+            shouldShowPage: true, //是否显示该按钮
+            useBootstrapTooltip: true,
+            onPageClicked: function (event, originalEvent, type, page) {
+
+                console.log("-------");
+                console.log(pageNum);
+                console.log(pageSize);
+                console.log(pages);
+                console.log(reqUrl);
+                console.log(reqType);
+                console.log(reqJsonData);
+                console.log("-------");
+
+                reqJsonData["pageNum"] = page;
+                $.ajax({//根据page去后台加载数据
+                    url: reqUrl,
+                    type: reqType,
+                    dataType: "json",
+                    data: reqJsonData,
+                    success: function (data) {
+                        //后台返回的需要显示的信息列表
+                        //根据自己需求再进行前端渲染
+
+                        console.log("%%%%");
+                        console.log(data);
+                        reset_tbody();
+                        showManyUserInfo(data.data.list);
+                        console.log("%%%%");
+                    }
+
+                })
+
+                console.log(page);
+            }
+        });
+    }
+
+
+    //封装的分页
+    function page2(pageNum, pageSize, pages, reqUrl, reqType, reqJsonData) {
+        $("#page").bootstrapPaginator({
+            bootstrapMajorVersion: 3, //对应的bootstrap版本
+            currentPage: pageNum, //当前页数
+            numberOfPages: pageSize, //每次显示页数
+            totalPages: pages, //总页数
+            shouldShowPage: true, //是否显示该按钮
+            useBootstrapTooltip: true,
+            onPageClicked: function (event, originalEvent, type, page) {
+
+                console.log("-------");
+                console.log(pageNum);
+                console.log(pageSize);
+                console.log(pages);
+                console.log(reqUrl);
+                console.log(reqType);
+                console.log(reqJsonData);
+                console.log("-------");
+
+                reqJsonData["pageNum"] = page;
+                $.ajax({//根据page去后台加载数据
+                    url: reqUrl,
+                    type: reqType,
+                    dataType: "json",
+                    data: reqJsonData,
+                    success: function (data) {
+                        //后台返回的需要显示的信息列表
+                        //根据自己需求再进行前端渲染
+
+                        console.log("%%%%");
+                        console.log(data);
+                        reset_tbody();
+                        showManyUserInfo(data.data);
+                        console.log("%%%%");
+                    }
+
+                })
+
+                console.log(page);
+            }
+        });
+    }
+
+
+</script>
+</body>
+</html>

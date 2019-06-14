@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.info.dao.RecordMapper">
+
+    <resultMap id="recordMapperMap" type="com.info.entity.Record">
+        <result property="recordId" column="id"></result>
+        <result property="username" column="username"></result>
+        <result property="cardType" column="card_type"></result>
+        <result property="IDCard" column="ID_card"></result>
+        <result property="recordUser" column="record_user"></result>
+        <result property="recordOrg" column="record_Org"></result>
+        <result property="recordTime" column="record_time"></result>
+        <result property="recordReason" column="record_reason"></result>
+        <result property="remark1" column="remark1"></result>
+        <result property="remark2" column="remark2"></result>
+    </resultMap>
+    <insert id="addRecord" parameterType="com.info.entity.Record">
+        insert into record
+        (username, card_type, ID_card, record_user, record_org, record_time, record_reason, remark1, remark2)
+        values
+        (#{username}, #{cardType}, #{IDCard}, #{recordUser}, #{recordOrg}, #{recordTime}, #{recordReason}, #{remark1}, #{remark2})
+    </insert>
+
+    <select id="findByIdCard" parameterType="map" resultMap="recordMapperMap">
+        select * from record
+        <where>
+            <if test="IDCard != null">
+                and ID_card like '%' #{IDCard} '%'
+            </if>
+            <if test="cardType != null">
+                and card_type like '%' #{cardType} '%'
+            </if>
+
+        </where>
+    </select>
+
+
+    <select id="findAllCardType" resultType="java.lang.String">
+        select distinct card_type from record
+    </select>
+
+
+    <select id="findUserbyExcel" resultMap="recordMapperMap" parameterType="map">
+        select * from record where card_type = #{cardType} and ID_card in
+        <foreach collection="IDCard" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+
+    </select>
+
+    <select id="findUser" resultMap="recordMapperMap">
+        select * from record where id in
+        <foreach collection="ids" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+
+</mapper>

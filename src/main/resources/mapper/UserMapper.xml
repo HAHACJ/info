@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.info.dao.UserMapper">
+
+    <resultMap id="userMapperMap" type="com.info.entity.User">
+        <result property="userType" column="user_type"></result>
+        <result property="userId" column="id"></result>
+        <result property="username" column="username"></result>
+        <result property="password" column="password"></result>
+        <association property="org" javaType="Org">
+            <result property="orgId" column="id"></result>
+            <result property="orgName" column="org_name"></result>
+        </association>
+
+    </resultMap>
+    <insert id="addUser" parameterType="com.info.entity.User">
+        insert into info (`username`, `password`, `app_key`, `user_type`, `org_id`)
+        values (username, password, appKey, userType, orgId)
+    </insert>
+
+
+    <select id="findUser" parameterType="map" resultMap="userMapperMap">
+         SELECT * FROM `user` u  INNER JOIN org o on u.org_id = o.id
+        WHERE u.username = #{username} AND u.`password` = #{password}
+    </select>
+
+
+    <select id="findAllUser" resultMap="userMapperMap">
+        select * from `user` u inner join org o on u.org_id = o.id
+    </select>
+
+    <select id="findUserByAppKey" parameterType="string" resultMap="userMapperMap">
+         SELECT * FROM `user` u  INNER JOIN org o on u.org_id = o.id
+        WHERE u.app_key = #{appKey}
+    </select>
+
+</mapper>
